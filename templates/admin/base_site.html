@@ -1,0 +1,158 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{% if title %}{{ title }} | {% endif %}{% trans 'سیستم مدیریت حمل و نقل - افغانستان' %}{% endblock %}
+
+{% block branding %}
+    <div id="site-name" style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 24px;">🚚</span>
+        <span style="font-weight: bold;">{% trans 'سیستم مدیریت حمل و نقل' %}</span>
+        <span style="background: rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 20px; font-size: 12px;">{% trans 'افغانستان' %}</span>
+    </div>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block extrastyle %}
+<style>
+    /* استایل کلی ادمین */
+    #header {
+        background: linear-gradient(135deg, #1a472a 0%, #0f2b1a 100%) !important;
+    }
+    
+    #branding h1, #branding h1 a:link, #branding h1 a:visited {
+        color: white !important;
+    }
+    
+    .module h2, .module caption, .inline-group h2 {
+        background: linear-gradient(135deg, #2c3e50 0%, #1a472a 100%) !important;
+    }
+    
+    div.breadcrumbs {
+        background: #2c3e50 !important;
+    }
+    
+    .button, input[type=submit], input[type=button], .submit-row input, a.button {
+        background: #27ae60 !important;
+    }
+    
+    .button:hover, input[type=submit]:hover, input[type=button]:hover {
+        background: #1a472a !important;
+    }
+    
+    .object-tools a.addlink {
+        background: #27ae60 !important;
+    }
+    
+    .object-tools a.addlink:hover {
+        background: #1a472a !important;
+    }
+    
+    /* کارت‌های آمار */
+    .stats-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        border-bottom: 3px solid #27ae60;
+        transition: transform 0.3s;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-3px);
+    }
+    
+    .stat-number {
+        font-size: 28px;
+        font-weight: bold;
+        color: #27ae60;
+    }
+    
+    .stat-label {
+        font-size: 12px;
+        color: #7f8c8d;
+        margin-top: 5px;
+    }
+    
+    /* دکمه افزودن */
+    .add-button {
+        background: linear-gradient(135deg, #27ae60 0%, #1a472a 100%);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+    
+    .add-button:hover {
+        background: #1a472a;
+        transform: translateY(-2px);
+    }
+    
+    /* جدول */
+    #result_list {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    #result_list th {
+        background: linear-gradient(135deg, #2c3e50 0%, #1a472a 100%);
+        color: white;
+        padding: 12px;
+        font-weight: bold;
+    }
+    
+    #result_list td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    #result_list tr:hover {
+        background: #f8f9fa;
+    }
+    
+    /* فیلتر */
+    #changelist-filter {
+        background: white;
+        border-radius: 12px;
+        padding: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    #changelist-filter h3 {
+        background: #2c3e50;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 8px;
+        margin: -15px -15px 10px -15px;
+    }
+    
+    /* جستجو */
+    #toolbar {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>داشبورد گزارشات - سیستم TMS افغانستان</title>
+    <style>
+        body {
+            font-family: Tahoma, Arial;
+            background: #f5f6fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #27ae60;
+            margin: 10px 0;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-excel {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-excel:hover {
+            background: #229954;
+        }
+        .btn-pdf {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-pdf:hover {
+            background: #c0392b;
+        }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        hr {
+            margin: 30px 0;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 داشبورد گزارشات سیستم TMS</h1>
+        <p style="text-align: center; color: #666;">واحد پول: {{ currency_symbol }} ({{ currency_name }})</p>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div>📦</div>
+                <div class="stat-number">{{ total_orders }}</div>
+                <div class="stat-label">کل سفارشات</div>
+            </div>
+            <div class="stat-card">
+                <div>👥</div>
+                <div class="stat-number">{{ total_customers }}</div>
+                <div class="stat-label">مشتریان</div>
+            </div>
+            <div class="stat-card">
+                <div>🚛</div>
+                <div class="stat-number">{{ total_drivers }}</div>
+                <div class="stat-label">رانندگان</div>
+            </div>
+            <div class="stat-card">
+                <div>🚚</div>
+                <div class="stat-number">{{ total_vehicles }}</div>
+                <div class="stat-label">خودروها</div>
+            </div>
+            <div class="stat-card">
+                <div>💰</div>
+                <div class="stat-number">{{ total_invoices|floatformat:0 }}</div>
+                <div class="stat-label">کل فاکتورها ({{ currency_symbol }})</div>
+            </div>
+            <div class="stat-card">
+                <div>✅</div>
+                <div class="stat-number">{{ paid_invoices|floatformat:0 }}</div>
+                <div class="stat-label">پرداخت شده ({{ currency_symbol }})</div>
+            </div>
+            <div class="stat-card">
+                <div>⏳</div>
+                <div class="stat-number">{{ pending_invoices|floatformat:0 }}</div>
+                <div class="stat-label">در انتظار پرداخت ({{ currency_symbol }})</div>
+            </div>
+            <div class="stat-card">
+                <div>📅</div>
+                <div class="stat-number">{{ monthly_orders }}</div>
+                <div class="stat-label">سفارشات این ماه</div>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <div class="button-group">
+            <a href="/finance/export/orders/excel/" class="btn btn-excel">📊 خروجی اکسل سفارشات</a>
+            <a href="/finance/export/invoices/excel/" class="btn btn-excel">📊 خروجی اکسل فاکتورها</a>
+        
+        </div>
+    </div>
+</body>
+</html>

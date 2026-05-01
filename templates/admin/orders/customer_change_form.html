@@ -1,0 +1,97 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls %}
+
+{% block content_title %}
+    <h1 style="margin-bottom: 20px; color: #2c3e50;">
+        {% if add %}
+            ➕ افزودن مشتری جدید
+        {% else %}
+            ✏️ ویرایش اطلاعات مشتری: {{ original.name }}
+        {% endif %}
+    </h1>
+{% endblock %}
+
+{% block field_sets %}
+    <style>
+        /* استایل فرم */
+        .form-row {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        
+        .form-row:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .aligned label {
+            font-weight: bold;
+            color: #2c3e50;
+            width: 180px;
+        }
+        
+        input, select, textarea {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-family: inherit;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #27ae60;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(39,174,96,0.1);
+        }
+        
+        .submit-row {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .submit-row input {
+            background: linear-gradient(135deg, #27ae60 0%, #1a472a 100%);
+            border: none;
+            padding: 10px 25px;
+            font-size: 14px;
+            border-radius: 8px;
+        }
+        
+        .delete-button {
+            background: #e74c3c !important;
+        }
+        
+        /* پیش‌نمایش اعتبار */
+        .credit-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+    </style>
+    
+    {{ block.super }}
+    
+    <div class="credit-info">
+        💡 نکته: سقف اعتبار مشتری بر اساس تاریخچه پرداخت‌ها قابل افزایش است.
+    </div>
+{% endblock %}
+
+{% block submit_buttons_bottom %}
+    <div class="submit-row" style="display: flex; gap: 10px; justify-content: space-between;">
+        <div>
+            <input type="submit" value="💾 ذخیره اطلاعات" class="default" name="_save">
+            <input type="submit" value="💾 ذخیره و ادامه ویرایش" name="_continue">
+            <input type="submit" value="➕ ذخیره و افزودن جدید" name="_addanother">
+        </div>
+        {% if not add %}
+            <a href="delete/" class="delete-button" style="background: #e74c3c; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none;">🗑️ حذف مشتری</a>
+        {% endif %}
+    </div>
+{% endblock %}

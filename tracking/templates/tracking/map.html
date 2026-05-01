@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>ردیابی خودروها - سیستم TMS</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { font-family: Tahoma, Arial; margin: 0; padding: 0; }
+        #map { height: 600px; width: 100%; }
+        .info-panel {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            max-width: 300px;
+            background: rgba(255,255,255,0.95);
+            font-family: Tahoma, Arial;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        h3 { margin-top: 0; color: #2c3e50; }
+        .vehicle-item {
+            padding: 8px;
+            margin: 5px 0;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .vehicle-item:hover { background: #e3f2fd; }
+        .error { color: red; text-align: center; padding: 20px; }
+        .loading { text-align: center; padding: 20px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="info-panel">
+        <h3>🚚 خودروهای فعال</h3>
+        <div id="vehicles-list" class="loading">در حال بارگذاری...</div>
+    </div>
+    <div id="map"></div>
+
+    <script>
+        // راه‌اندازی نقشه
+        let map = L.map('map').setView([35.6892, 51.3890], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+        
+        let markers = {};
+        
+        // تابع بارگذاری موقعیت‌ها
+        async function loadLocations() {
+            try {
+                console.log('در حال بارگذاری...');
+                const response = await fetch('/tracking/api/locations/');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('داده دریافت شد:', data);
+                
+                if (data.locations && data.locations.length > 0) {
+                    updateVehiclesList(data.locations);
+                    updateMapMarkers(data.locations);
+                } else {
+                    document.getElementById('vehicles-list').innerHTML = '<div class="error">⚠️ هیچ خودروی فعالی یافت نشد</div>';
+                }
+            } catch (error) {
+                console.error('خطا:', error);
+                document.getElementById('vehicles-list').innerHTML = `<div class="error">❌ خطا: ${error.message}</div>`;
+            }
+        }
+        
+        function updateVehiclesList(locations) {
+            let html = '';
+            locations.forEach(loc => {
+                const time = new Date(loc.last_update).toLocaleTimeString('fa-IR');
+                html += `
+                    <div class="vehicle-item" onclick="flyTo(${loc.latitude}, ${loc.longitude})">
+                        <strong>🚛 ${loc.plate_number}</strong><br>
+                        ⚡ سرعت: ${loc.speed || 'نامشخص'} km/h<br>
+                        🕐 ${time}
+                    </div>
+                `;
+            });
+            document.getElementById('vehicles-list').innerHTML = html;
+        }
+        
+        function updateMapMarkers(locations) {
+            // حذف نشانگرهای قبلی
+            Object.values(markers).forEach(marker => map.removeLayer(marker));
+            markers = {};
+            
+            locations.forEach(loc => {
+                const lat = parseFloat(loc.latitude);
+                const lng = parseFloat(loc.longitude);
+                
+                // آیکون خودرو
+                const carIcon = L.divIcon({
+                    html: '<div style="font-size: 28px;">🚛</div>',
+                    iconSize: [30, 30],
+                    className: 'custom-marker'
+                });
+                
+                const marker = L.marker([lat, lng], { icon: carIcon }).addTo(map);
+                marker.bindPopup(`
+                    <div style="text-align: right; direction: rtl;">
+                        <strong>${loc.plate_number}</strong><br>
+                        سرعت: ${loc.speed || 'نامشخص'} km/h<br>
+                        موقعیت: ${lat.toFixed(5)}, ${lng.toFixed(5)}
+                    </div>
+                `);
+                
+                markers[loc.vehicle_id] = marker;
+            });
+            
+            // اگر خودرو داریم، نقشه را به اولین خودرو ببریم
+            if (locations.length > 0) {
+                const first = locations[0];
+                map.setView([parseFloat(first.latitude), parseFloat(first.longitude)], 12);
+            }
+        }
+        
+        function flyTo(lat, lng) {
+            map.flyTo([parseFloat(lat), parseFloat(lng)], 15);
+        }
+        
+        // بارگذاری اولیه
+        loadLocations();
+        
+        // بروزرسانی هر 15 ثانیه
+        setInterval(loadLocations, 15000);
+    </script>
+</body>
+</html>
