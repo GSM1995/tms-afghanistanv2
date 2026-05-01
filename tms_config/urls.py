@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView
 from .views import admin_dashboard
+from django.urls import path, include
 import json
 
 @csrf_exempt
@@ -166,4 +167,5 @@ urlpatterns = [
     path('tracking/', include('tracking.urls')),
     path('finance/', include('finance.urls')),
     path('customer/', include('customer_panel.urls')),
+    path('driver/', include('driver_panel.urls')),
 ]

@@ -21,6 +21,7 @@ class Customer(models.Model):
 
 class Driver(models.Model):
     """اطلاعات رانندگان"""
+    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="کاربر مرتبط")
     first_name = models.CharField(max_length=50, verbose_name="نام")
     last_name = models.CharField(max_length=50, verbose_name="نام خانوادگی")
     national_code = models.CharField(max_length=10, unique=True, verbose_name="کد ملی")

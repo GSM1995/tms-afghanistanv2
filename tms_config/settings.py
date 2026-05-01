@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'tracking',
     'common',
     'customer_panel',
+    'driver_panel',
 ]
 
 MIDDLEWARE = [
