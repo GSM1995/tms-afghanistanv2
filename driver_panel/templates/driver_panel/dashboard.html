@@ -1,180 +1,178 @@
-<!DOCTYPE html>
-<html dir="rtl" lang="fa">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>داشبورد راننده - TMS افغانستان</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; direction: rtl; }
-        .header { background: linear-gradient(135deg, #1a472a 0%, #0f2b1a 100%); color: white; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 20px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
-        .logo span { background: rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 20px; font-size: 11px; }
-        .nav a { color: white; text-decoration: none; padding: 8px 15px; border-radius: 8px; }
-        .logout-btn { background: #e74c3c; padding: 8px 18px; border-radius: 30px; }
-        .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
-        .welcome-card { background: linear-gradient(135deg, #2c3e50 0%, #1a472a 100%); color: white; border-radius: 15px; padding: 25px; margin-bottom: 25px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: white; border-radius: 15px; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.08); transition: transform 0.3s; }
-        .stat-card:hover { transform: translateY(-3px); }
-        .stat-number { font-size: 28px; font-weight: bold; color: #27ae60; margin: 10px 0; }
-        .section-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 20px; }
-        .section-header { padding: 18px 25px; background: #f8f9fa; border-bottom: 2px solid #e9ecef; }
-        .section-title { font-size: 18px; font-weight: bold; color: #2c3e50; }
-        .info-row { display: flex; padding: 12px 25px; border-bottom: 1px solid #e9ecef; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-        .info-label { width: 120px; font-weight: bold; color: #555; }
-        .info-value { flex: 1; }
-        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-        .badge-warning { background: #fff3cd; color: #856404; }
-        .badge-info { background: #d1ecf1; color: #0c5460; }
-        .badge-success { background: #d4edda; color: #155724; }
-        .btn { padding: 8px 16px; background: #27ae60; color: white; text-decoration: none; border-radius: 8px; border: none; cursor: pointer; font-size: 14px; display: inline-block; margin: 5px; }
-        .btn-danger { background: #e74c3c; }
-        .btn-warning { background: #f39c12; }
-        .btn-info { background: #3498db; }
-        .footer { background: white; padding: 15px; text-align: center; color: #7f8c8d; font-size: 12px; margin-top: 30px; }
-        .status-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-        @media (max-width: 768px) { .info-row { flex-direction: column; align-items: flex-start; } .info-label { width: 100%; margin-bottom: 5px; } }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <div class="logo">🚛 پنل رانندگان <span>افغانستان</span></div>
-        <div class="nav">
-            <a href="/driver/dashboard/">📊 داشبورد</a>
-            <a href="/driver/logout/" class="logout-btn">🚪 خروج</a>
+{% extends "base.html" %}
+
+{% block title %}داشبورد راننده - TMS افغانستان{% endblock %}
+
+{% block content %}
+<div class="welcome-card" style="background: linear-gradient(135deg, #2c3e50 0%, #1a472a 100%); color: white; border-radius: 15px; padding: 25px; margin-bottom: 25px;">
+    <h2>👋 خوش آمدید، {{ driver.first_name }} {{ driver.last_name }}</h2>
+    <p>وضعیت: {% if driver.is_active %}✅ فعال{% else %}❌ غیرفعال{% endif %}</p>
+</div>
+
+<div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+    <div class="stat-card" style="background: white; border-radius: 15px; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+        <div style="font-size: 28px;">🚚</div>
+        <div style="font-size: 28px; font-weight: bold; color: #27ae60; margin: 10px 0;">{{ total_trips }}</div>
+        <div style="font-size: 13px; color: #7f8c8d;">کل سفرها</div>
+    </div>
+    <div class="stat-card" style="background: white; border-radius: 15px; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+        <div style="font-size: 28px;">✅</div>
+        <div style="font-size: 28px; font-weight: bold; color: #27ae60; margin: 10px 0;">{{ delivered_orders }}</div>
+        <div style="font-size: 13px; color: #7f8c8d;">تحویل شده</div>
+    </div>
+</div>
+
+<!-- درخواست‌های جدید -->
+{% if pending_requests %}
+<div class="section-card" style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 20px;">
+    <div class="section-header" style="padding: 18px 25px; background: #f8f9fa; border-bottom: 2px solid #e9ecef;">
+        <div class="section-title" style="font-size: 18px; font-weight: bold; color: #2c3e50;">📋 درخواست‌های جدید</div>
+    </div>
+    {% for req in pending_requests %}
+    <div class="info-row" style="display: flex; padding: 12px 25px; border-bottom: 1px solid #e9ecef; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+        <div class="info-value" style="flex: 1;">
+            <strong>سفارش {{ req.order.order_number }}</strong><br>
+            از {{ req.order.origin }} به {{ req.order.destination }}<br>
+            مبلغ: {{ req.order.price|floatformat:0 }} ؋
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <a href="/driver/accept/{{ req.id }}/" class="btn" style="background: #27ae60; color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none;">✅ قبول</a>
+            <a href="/driver/reject/{{ req.id }}/" class="btn btn-danger" style="background: #e74c3c; color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none;">❌ رد</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- سفارش جاری -->
+{% if current_order %}
+<div class="section-card" style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 20px;">
+    <div class="section-header" style="padding: 18px 25px; background: #f8f9fa; border-bottom: 2px solid #e9ecef;">
+        <div class="section-title" style="font-size: 18px; font-weight: bold; color: #2c3e50;">🚚 سفارش جاری</div>
+    </div>
+    <div class="info-row" style="display: flex; padding: 12px 25px; border-bottom: 1px solid #e9ecef;">
+        <div class="info-label" style="width: 120px; font-weight: bold; color: #555;">شماره سفارش:</div>
+        <div class="info-value" style="flex: 1;">{{ current_order.order_number }}</div>
+    </div>
+    <div class="info-row" style="display: flex; padding: 12px 25px; border-bottom: 1px solid #e9ecef;">
+        <div class="info-label" style="width: 120px; font-weight: bold; color: #555;">مبدا:</div>
+        <div class="info-value" style="flex: 1;">{{ current_order.origin }}</div>
+    </div>
+    <div class="info-row" style="display: flex; padding: 12px 25px; border-bottom: 1px solid #e9ecef;">
+        <div class="info-label" style="width: 120px; font-weight: bold; color: #555;">مقصد:</div>
+        <div class="info-value" style="flex: 1;">{{ current_order.destination }}</div>
+    </div>
+    <div class="info-row" style="display: flex; padding: 12px 25px; border-bottom: 1px solid #e9ecef;">
+        <div class="info-label" style="width: 120px; font-weight: bold; color: #555;">نوع بار:</div>
+        <div class="info-value" style="flex: 1;">{{ current_order.cargo_type }}</div>
+    </div>
+    <div class="info-row" style="display: flex; padding: 12px 25px; border-bottom: 1px solid #e9ecef;">
+        <div class="info-label" style="width: 120px; font-weight: bold; color: #555;">وزن:</div>
+        <div class="info-value" style="flex: 1;">{{ current_order.weight }} تن</div>
+    </div>
+    <div class="info-row" style="display: flex; padding: 12px 25px; border-bottom: 1px solid #e9ecef;">
+        <div class="info-label" style="width: 120px; font-weight: bold; color: #555;">مبلغ:</div>
+        <div class="info-value" style="flex: 1;">{{ current_order.price|floatformat:0 }} ؋</div>
+    </div>
+    <div class="info-row" style="display: flex; padding: 12px 25px; border-bottom: 1px solid #e9ecef;">
+        <div class="info-label" style="width: 120px; font-weight: bold; color: #555;">وضعیت:</div>
+        <div class="info-value" style="flex: 1;">
+            <span class="badge" style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; 
+                {% if current_order.status == 'assigned' %}background: #fff3cd; color: #856404;
+                {% elif current_order.status == 'loading' %}background: #d1ecf1; color: #0c5460;
+                {% elif current_order.status == 'in_transit' %}background: #d1ecf1; color: #0c5460;
+                {% elif current_order.status == 'delivered' %}background: #d4edda; color: #155724;
+                {% else %}background: #fff3cd; color: #856404;{% endif %}">
+                {{ current_order.get_status_display }}
+            </span>
         </div>
     </div>
     
-    <div class="container">
-        <div class="welcome-card">
-            <h2>👋 خوش آمدید، {{ driver.first_name }} {{ driver.last_name }}</h2>
-            <p>وضعیت: {% if driver.is_active %}✅ فعال{% else %}❌ غیرفعال{% endif %}</p>
-        </div>
-        
-        <div class="stats-grid">
-            <div class="stat-card"><div>🚚</div><div class="stat-number">{{ total_trips }}</div><div>کل سفرها</div></div>
-            <div class="stat-card"><div>✅</div><div class="stat-number">{{ delivered_orders }}</div><div>تحویل شده</div></div>
-        </div>
-        
-        <!-- درخواست‌های جدید -->
-        {% if pending_requests %}
-        <div class="section-card">
-            <div class="section-header"><div class="section-title">📋 درخواست‌های جدید</div></div>
-            {% for req in pending_requests %}
-            <div class="info-row">
-                <div class="info-value">
-                    <strong>سفارش {{ req.order.order_number }}</strong><br>
-                    از {{ req.order.origin }} به {{ req.order.destination }}<br>
-                    مبلغ: {{ req.order.price|floatformat:0 }} ؋
-                </div>
-                <div class="status-buttons">
-                    <a href="/driver/accept/{{ req.id }}/" class="btn">✅ قبول</a>
-                    <a href="/driver/reject/{{ req.id }}/" class="btn btn-danger">❌ رد</a>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-        
-        <!-- سفارش جاری -->
-        {% if current_order %}
-        <div class="section-card">
-            <div class="section-header"><div class="section-title">🚚 سفارش جاری</div></div>
-            <div class="info-row"><div class="info-label">شماره سفارش:</div><div class="info-value">{{ current_order.order_number }}</div></div>
-            <div class="info-row"><div class="info-label">مبدا:</div><div class="info-value">{{ current_order.origin }}</div></div>
-            <div class="info-row"><div class="info-label">مقصد:</div><div class="info-value">{{ current_order.destination }}</div></div>
-            <div class="info-row"><div class="info-label">نوع بار:</div><div class="info-value">{{ current_order.cargo_type }}</div></div>
-            <div class="info-row"><div class="info-label">وزن:</div><div class="info-value">{{ current_order.weight }} تن</div></div>
-            <div class="info-row"><div class="info-label">مبلغ:</div><div class="info-value">{{ current_order.price|floatformat:0 }} ؋</div></div>
-            <div class="info-row"><div class="info-label">وضعیت:</div><div class="info-value">
-                <span class="badge 
-                    {% if current_order.status == 'assigned' %}badge-warning
-                    {% elif current_order.status == 'loading' %}badge-info
-                    {% elif current_order.status == 'in_transit' %}badge-info
-                    {% elif current_order.status == 'delivered' %}badge-success
-                    {% else %}badge-warning{% endif %}">
-                    {{ current_order.get_status_display }}
-                </span>
-            </div></div>
-            
-            <!-- دکمه‌های تغییر وضعیت -->
-            <div class="info-row">
-                <div class="info-label">عملیات:</div>
-                <div class="info-value">
-                    <div class="status-buttons">
-                        {% if current_order.status == 'assigned' %}
-                            <button onclick="updateStatus('{{ current_order.id }}', 'loading')" class="btn btn-warning">📦 بارگیری</button>
-                        {% elif current_order.status == 'loading' %}
-                            <button onclick="updateStatus('{{ current_order.id }}', 'in_transit')" class="btn btn-info">🚚 در مسیر</button>
-                        {% elif current_order.status == 'in_transit' %}
-                            <button onclick="updateStatus('{{ current_order.id }}', 'delivered')" class="btn btn-success">✅ تحویل شد</button>
-                        {% elif current_order.status == 'delivered' %}
-                            <span style="color: #27ae60;">✓ سفارش تحویل شده</span>
-                        {% endif %}
-                    </div>
-                </div>
+    <!-- دکمه‌های تغییر وضعیت -->
+    <div class="info-row" style="display: flex; padding: 12px 25px; border-bottom: 1px solid #e9ecef;">
+        <div class="info-label" style="width: 120px; font-weight: bold; color: #555;">عملیات:</div>
+        <div class="info-value" style="flex: 1;">
+            <div style="display: flex; gap: 10px;">
+                {% if current_order.status == 'assigned' %}
+                    <button onclick="updateStatus('{{ current_order.id }}', 'loading')" style="background: #f39c12; color: white; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;">📦 بارگیری</button>
+                {% elif current_order.status == 'loading' %}
+                    <button onclick="updateStatus('{{ current_order.id }}', 'in_transit')" style="background: #3498db; color: white; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;">🚚 در مسیر</button>
+                {% elif current_order.status == 'in_transit' %}
+                    <button onclick="updateStatus('{{ current_order.id }}', 'delivered')" style="background: #27ae60; color: white; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;">✅ تحویل شد</button>
+                {% elif current_order.status == 'delivered' %}
+                    <span style="color: #27ae60;">✓ سفارش تحویل شده</span>
+                {% endif %}
             </div>
         </div>
-        {% else %}
-        <div class="section-card">
-            <div class="section-header"><div class="section-title">🆕 وضعیت سفارش</div></div>
-            <div class="info-row"><div class="info-value" style="text-align: center;">هیچ سفارش فعالی ندارید</div></div>
-        </div>
-        {% endif %}
-        
-        <!-- خودروی اختصاصی -->
-        {% if vehicle %}
-        <div class="section-card">
-            <div class="section-header"><div class="section-title">🚛 خودروی اختصاصی</div></div>
-            <div class="info-row"><div class="info-label">پلاک:</div><div class="info-value">{{ vehicle.plate_number }}</div></div>
-            <div class="info-row"><div class="info-label">مدل:</div><div class="info-value">{{ vehicle.model }}</div></div>
-            <div class="info-row"><div class="info-label">ظرفیت:</div><div class="info-value">{{ vehicle.capacity }} تن</div></div>
-        </div>
-        {% endif %}
     </div>
-    
-    <div class="footer">
-        <p>سیستم مدیریت حمل و نقل (TMS) | توسعه یافته برای افغانستان | واحد پول: افغانی (؋)</p>
+</div>
+{% else %}
+<div class="section-card" style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 20px;">
+    <div class="section-header" style="padding: 18px 25px; background: #f8f9fa; border-bottom: 2px solid #e9ecef;">
+        <div class="section-title" style="font-size: 18px; font-weight: bold; color: #2c3e50;">🆕 وضعیت سفارش</div>
     </div>
-    
-    <script>
-    function updateStatus(orderId, status) {
-        fetch(`/driver/update-status/${orderId}/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `status=${status}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert('خطا در تغییر وضعیت: ' + (data.error || 'خطای ناشناخته'));
-            }
-        })
-        .catch(error => {
-            alert('خطا در ارتباط با سرور');
-        });
-    }
-    
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
+    <div class="info-row" style="display: flex; padding: 12px 25px;">
+        <div class="info-value" style="flex: 1; text-align: center; color: #7f8c8d;">هیچ سفارش فعالی ندارید</div>
+    </div>
+</div>
+{% endif %}
+
+<!-- خودروی اختصاصی -->
+{% if vehicle %}
+<div class="section-card" style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 20px;">
+    <div class="section-header" style="padding: 18px 25px; background: #f8f9fa; border-bottom: 2px solid #e9ecef;">
+        <div class="section-title" style="font-size: 18px; font-weight: bold; color: #2c3e50;">🚛 خودروی اختصاصی</div>
+    </div>
+    <div class="info-row" style="display: flex; padding: 12px 25px; border-bottom: 1px solid #e9ecef;">
+        <div class="info-label" style="width: 120px; font-weight: bold; color: #555;">پلاک:</div>
+        <div class="info-value" style="flex: 1;">{{ vehicle.plate_number }}</div>
+    </div>
+    <div class="info-row" style="display: flex; padding: 12px 25px; border-bottom: 1px solid #e9ecef;">
+        <div class="info-label" style="width: 120px; font-weight: bold; color: #555;">مدل:</div>
+        <div class="info-value" style="flex: 1;">{{ vehicle.model }}</div>
+    </div>
+    <div class="info-row" style="display: flex; padding: 12px 25px;">
+        <div class="info-label" style="width: 120px; font-weight: bold; color: #555;">ظرفیت:</div>
+        <div class="info-value" style="flex: 1;">{{ vehicle.capacity }} تن</div>
+    </div>
+</div>
+{% endif %}
+
+<script>
+function updateStatus(orderId, status) {
+    fetch(`/driver/update-status/${orderId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `status=${status}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('خطا در تغییر وضعیت: ' + (data.error || 'خطای ناشناخته'));
+        }
+    })
+    .catch(error => {
+        alert('خطا در ارتباط با سرور');
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
             }
         }
-        return cookieValue;
     }
-    </script>
-</body>
-</html>
+    return cookieValue;
+}
+</script>
+{% endblock %}

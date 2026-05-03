@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}{% if document %}ویرایش سند{% else %}افزودن سند جدید{% endif %}{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h2>{% if document %}✏️ ویرایش سند{% else %}➕ افزودن سند جدید{% endif %}</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>عنوان سند</label>
+            <input type="text" name="title" value="{{ document.title|default:'' }}" required>
+        </div>
+        <div class="form-group">
+            <label>نوع سند</label>
+            <select name="document_type" required>
+                <option value="waybill" {% if document.document_type == 'waybill' %}selected{% endif %}>بارنامه</option>
+                <option value="insurance" {% if document.document_type == 'insurance' %}selected{% endif %}>بیمه نامه</option>
+                <option value="customs" {% if document.document_type == 'customs' %}selected{% endif %}>مدارک گمرکی</option>
+                <option value="invoice" {% if document.document_type == 'invoice' %}selected{% endif %}>فاکتور</option>
+                <option value="other" {% if document.document_type == 'other' %}selected{% endif %}>سایر</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>سفارش مرتبط</label>
+            <select name="order" required>
+                {% for order in orders %}
+                <option value="{{ order.id }}" {% if document.order.id == order.id %}selected{% endif %}>
+                    {{ order.order_number }} - {{ order.customer.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>فایل سند</label>
+            <input type="file" name="file" {% if not document %}required{% endif %}>
+            {% if document and document.file %}
+            <small>فایل فعلی: <a href="{{ document.file.url }}" target="_blank">مشاهده</a></small>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label>ثبت کننده</label>
+            <select name="uploaded_by" required>
+                {% for user in users %}
+                <option value="{{ user.id }}" {% if document.uploaded_by.id == user.id %}selected{% endif %}>
+                    {{ user.username }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>توضیحات</label>
+            <textarea name="notes" rows="3">{{ document.notes|default:'' }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">💾 ذخیره</button>
+        <a href="/admin/documents/" class="btn btn-danger">↩️ انصراف</a>
+    </form>
+</div>
+{% endblock %}

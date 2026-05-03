@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}{% if user_role %}ویرایش نقش{% else %}افزودن نقش جدید{% endif %}{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h2>{% if user_role %}✏️ ویرایش نقش کاربری{% else %}➕ افزودن نقش جدید{% endif %}</h2>
+    <form method="post">
+        {% csrf_token %}
+        
+        {% if not user_role %}
+        <div class="form-group">
+            <label>کاربر</label>
+            <select name="user" required>
+                <option value="">انتخاب کاربر...</option>
+                {% for user in users %}
+                <option value="{{ user.id }}">{{ user.username }} ({{ user.email|default:"بدون ایمیل" }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+        
+        <div class="form-group">
+            <label>نقش کلی</label>
+            <select name="role">
+                <option value="admin" {% if user_role.role == 'admin' %}selected{% endif %}>مدیر کل</option>
+                <option value="manager" {% if user_role.role == 'manager' %}selected{% endif %}>مدیر</option>
+                <option value="accountant" {% if user_role.role == 'accountant' %}selected{% endif %}>حسابدار</option>
+                <option value="dispatcher" {% if user_role.role == 'dispatcher' %}selected{% endif %}>مسئول تخصیص بار</option>
+                <option value="viewer" {% if user_role.role == 'viewer' %}selected{% endif %}>بازدیدکننده</option>
+            </select>
+        </div>
+        
+        <hr>
+        <h3>دسترسی‌های دقیق:</h3>
+        
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="can_manage_customers" {% if user_role.can_manage_customers %}checked{% endif %}> مدیریت مشتریان
+            </label>
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="can_manage_drivers" {% if user_role.can_manage_drivers %}checked{% endif %}> مدیریت رانندگان
+            </label>
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="can_manage_vehicles" {% if user_role.can_manage_vehicles %}checked{% endif %}> مدیریت خودروها
+            </label>
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="can_manage_orders" {% if user_role.can_manage_orders %}checked{% endif %}> مدیریت سفارشات
+            </label>
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="can_manage_finance" {% if user_role.can_manage_finance %}checked{% endif %}> مدیریت مالی
+            </label>
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="can_view_reports" {% if user_role.can_view_reports %}checked{% endif %}> مشاهده گزارشات
+            </label>
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="can_manage_users" {% if user_role.can_manage_users %}checked{% endif %}> مدیریت کاربران
+            </label>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">💾 ذخیره</button>
+        <a href="/admin/roles/" class="btn btn-danger">↩️ انصراف</a>
+    </form>
+</div>
+{% endblock %}

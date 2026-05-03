@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}{% if invoice %}ویرایش فاکتور{% else %}افزودن فاکتور جدید{% endif %}{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h2>{% if invoice %}✏️ ویرایش فاکتور{% else %}➕ افزودن فاکتور جدید{% endif %}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>شماره فاکتور</label>
+            <input type="text" name="invoice_number" value="{{ invoice.invoice_number|default:'' }}" required>
+        </div>
+        <div class="form-group">
+            <label>مشتری</label>
+            <select name="customer" required>
+                {% for c in customers %}
+                <option value="{{ c.id }}" {% if invoice.customer.id == c.id %}selected{% endif %}>{{ c.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>سفارش مرتبط</label>
+            <select name="order">
+                <option value="">-----</option>
+                {% for o in orders %}
+                <option value="{{ o.id }}" {% if invoice.order.id == o.id %}selected{% endif %}>{{ o.order_number }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>مبلغ کل (؋)</label>
+            <input type="number" name="subtotal" value="{{ invoice.subtotal|default:0 }}">
+        </div>
+        <div class="form-group">
+            <label>تخفیف (؋)</label>
+            <input type="number" name="discount" value="{{ invoice.discount|default:0 }}">
+        </div>
+        <div class="form-group">
+            <label>وضعیت</label>
+            <select name="status">
+                <option value="draft" {% if invoice.status == 'draft' %}selected{% endif %}>پیش‌نویس</option>
+                <option value="sent" {% if invoice.status == 'sent' %}selected{% endif %}>ارسال شده</option>
+                <option value="paid" {% if invoice.status == 'paid' %}selected{% endif %}>پرداخت شده</option>
+                <option value="overdue" {% if invoice.status == 'overdue' %}selected{% endif %}>سررسید گذشته</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>تاریخ سررسید</label>
+            <input type="date" name="due_date" value="{{ invoice.due_date|date:'Y-m-d'|default:'' }}">
+        </div>
+        <div class="form-group">
+            <label>توضیحات</label>
+            <textarea name="description" rows="3">{{ invoice.description|default:'' }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">💾 ذخیره</button>
+        <a href="/admin/finance/invoices/" class="btn btn-danger">↩️ انصراف</a>
+    </form>
+</div>
+{% endblock %}

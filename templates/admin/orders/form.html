@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}{% if order %}ویرایش سفارش{% else %}افزودن سفارش جدید{% endif %}{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h2>{% if order %}✏️ ویرایش سفارش{% else %}➕ افزودن سفارش جدید{% endif %}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>شماره سفارش</label>
+            <input type="text" name="order_number" value="{{ order.order_number|default:'' }}" required>
+        </div>
+        <div class="form-group">
+            <label>مشتری</label>
+            <select name="customer" required>
+                {% for c in customers %}
+                <option value="{{ c.id }}" {% if order.customer.id == c.id %}selected{% endif %}>{{ c.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>مبدا</label>
+            <input type="text" name="origin" value="{{ order.origin|default:'' }}" required>
+        </div>
+        <div class="form-group">
+            <label>مقصد</label>
+            <input type="text" name="destination" value="{{ order.destination|default:'' }}" required>
+        </div>
+        <div class="form-group">
+            <label>نوع بار</label>
+            <input type="text" name="cargo_type" value="{{ order.cargo_type|default:'' }}">
+        </div>
+        <div class="form-group">
+            <label>وزن (تن)</label>
+            <input type="number" step="0.01" name="weight" value="{{ order.weight|default:0 }}">
+        </div>
+        <div class="form-group">
+            <label>مبلغ کرایه (؋)</label>
+            <input type="number" name="price" value="{{ order.price|default:0 }}">
+        </div>
+        <div class="form-group">
+            <label>پیش پرداخت (؋)</label>
+            <input type="number" name="advance_payment" value="{{ order.advance_payment|default:0 }}">
+        </div>
+        <div class="form-group">
+            <label>وضعیت</label>
+            <select name="status">
+                <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>در انتظار</option>
+                <option value="assigned" {% if order.status == 'assigned' %}selected{% endif %}>تخصیص داده شده</option>
+                <option value="loading" {% if order.status == 'loading' %}selected{% endif %}>در حال بارگیری</option>
+                <option value="in_transit" {% if order.status == 'in_transit' %}selected{% endif %}>در مسیر</option>
+                <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>تحویل شده</option>
+                <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>لغو شده</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>تاریخ بارگیری</label>
+            <input type="datetime-local" name="pickup_date" value="{{ order.pickup_date|date:'Y-m-d\\TH:i'|default:'' }}">
+        </div>
+        <div class="form-group">
+            <label>راننده</label>
+            <select name="driver">
+                <option value="">-----</option>
+                {% for d in drivers %}
+                <option value="{{ d.id }}" {% if order.driver.id == d.id %}selected{% endif %}>{{ d.first_name }} {{ d.last_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>خودرو</label>
+            <select name="vehicle">
+                <option value="">-----</option>
+                {% for v in vehicles %}
+                <option value="{{ v.id }}" {% if order.vehicle.id == v.id %}selected{% endif %}>{{ v.plate_number }} - {{ v.model }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">💾 ذخیره</button>
+        <a href="/admin/orders/" class="btn btn-danger">↩️ انصراف</a>
+    </form>
+</div>
+{% endblock %}

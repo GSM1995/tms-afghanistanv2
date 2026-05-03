@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خروج از سیستم - TMS افغانستان</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a472a 0%, #2c3e50 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .logout-container {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .logout-card {
+            background: white;
+            border-radius: 20px;
+            padding: 50px 40px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 0.5s ease-out;
+        }
+        
+        @keyframes bounce {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+        
+        .message {
+            color: #27ae60;
+            font-size: 18px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #d4edda;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        
+        .info-text {
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .timer {
+            font-size: 14px;
+            color: #95a5a6;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .timer span {
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .button-group {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1a472a;
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #27ae60;
+            border: 2px solid #27ae60;
+        }
+        
+        .btn-outline:hover {
+            background: #27ae60;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+        }
+    </style>
+    <meta http-equiv="refresh" content="5; url=/login/">
+</head>
+<body>
+    <div class="logout-container">
+        <div class="logout-card">
+            <div class="success-icon">
+                🚪✅
+            </div>
+            <h1>خروج موفق</h1>
+            <div class="message">
+                شما با موفقیت از سیستم خارج شدید
+            </div>
+            <div class="info-text">
+                جلسه کاربری شما به پایان رسید.<br>
+                برای امنیت بیشتر، تمام اطلاعات ورود شما پاک شد.
+            </div>
+            <div class="timer">
+                در <span id="counter">5</span> ثانیه دیگر به صفحه ورود منتقل می‌شوید...
+            </div>
+            <div class="button-group">
+                <a href="/login/" class="btn btn-primary">ورود مجدد</a>
+                <a href="/" class="btn btn-outline">صفحه اصلی</a>
+            </div>
+        </div>
+        <div class="footer">
+            سیستم مدیریت حمل و نقل (TMS) | افغانستان
+        </div>
+    </div>
+    
+    <script>
+        let seconds = 5;
+        const counterElement = document.getElementById('counter');
+        
+        const interval = setInterval(function() {
+            seconds--;
+            if (counterElement) {
+                counterElement.textContent = seconds;
+            }
+            if (seconds <= 0) {
+                clearInterval(interval);
+                window.location.href = '/login/';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

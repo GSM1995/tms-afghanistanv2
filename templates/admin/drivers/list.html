@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}لیست رانندگان{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🚛 لیست رانندگان</h1>
+    <a href="/admin/drivers/create/" class="btn btn-primary">➕ افزودن راننده جدید</a>
+</div>
+
+<div style="overflow-x: auto;">
+    <table class="table">
+        <thead>
+            <tr><th>نام</th><th>نام خانوادگی</th><th>کد ملی</th><th>موبایل</th><th>وضعیت</th><th>عملیات</th></tr>
+        </thead>
+        <tbody>
+            {% for driver in drivers %}
+            <tr>
+                <td>{{ driver.first_name }}</td>
+                <td>{{ driver.last_name }}</td>
+                <td>{{ driver.national_code }}</td>
+                <td>{{ driver.phone }}</td>
+                <td>{% if driver.is_active %}<span class="badge-success">فعال</span>{% else %}<span class="badge-danger">غیرفعال</span>{% endif %}</td>
+                <td>
+                    <a href="/admin/drivers/edit/{{ driver.id }}/" class="btn btn-primary btn-sm">✏️</a>
+                    <a href="/admin/drivers/delete/{{ driver.id }}/" class="btn btn-danger btn-sm" onclick="return confirm('آیا مطمئن هستید؟')">🗑️</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" style="text-align: center;">هیچ راننده‌ای یافت نشد</a></a></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

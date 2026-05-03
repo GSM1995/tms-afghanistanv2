@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html dir="rtl">
+<html dir="rtl" lang="fa">
 <head>
     <meta charset="UTF-8">
-    <title>ورود رانندگان</title>
+    <title>ورود رانندگان - TMS افغانستان</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: Tahoma, Arial;
             background: linear-gradient(135deg, #1a472a 0%, #2c3e50 100%);
@@ -14,42 +20,180 @@
             align-items: center;
             min-height: 100vh;
         }
+        
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+        }
+        
         .login-box {
             background: white;
             padding: 40px;
             border-radius: 15px;
-            width: 350px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             text-align: center;
         }
-        input {
+        
+        .logo-icon {
+            font-size: 64px;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 14px;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        .form-group input {
             width: 100%;
             padding: 12px;
-            margin: 10px 0;
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            direction: ltr;
         }
+        
+        .form-group input:focus {
+            border-color: #27ae60;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(39,174,96,0.1);
+        }
+        
         button {
             width: 100%;
             padding: 12px;
             background: #27ae60;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s;
         }
-        .error { color: red; }
+        
+        button:hover {
+            background: #1a472a;
+            transform: translateY(-2px);
+        }
+        
+        .error {
+            background: #fee;
+            color: #c0392b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-right: 4px solid #e74c3c;
+            text-align: right;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-right: 4px solid #27ae60;
+            text-align: right;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-right: 4px solid #3498db;
+            text-align: right;
+        }
+        
+        .links {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .links a {
+            color: #27ae60;
+            text-decoration: none;
+            font-size: 13px;
+            margin: 0 8px;
+        }
+        
+        .links a:hover {
+            text-decoration: underline;
+        }
+        
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 11px;
+            color: rgba(255,255,255,0.7);
+        }
     </style>
 </head>
 <body>
-    <div class="login-box">
-        <h2>🚛 پنل رانندگان</h2>
-        {% if error %}<div class="error">{{ error }}</div>{% endif %}
-        <form method="post">
-            {% csrf_token %}
-            <input type="text" name="username" placeholder="نام کاربری">
-            <input type="password" name="password" placeholder="رمز عبور">
-            <button type="submit">ورود</button>
-        </form>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="logo-icon">🚛</div>
+            <h2>پنل رانندگان</h2>
+            <div class="subtitle">سیستم مدیریت حمل و نقل - افغانستان</div>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>📝 نام کاربری</label>
+                    <input type="text" name="username" placeholder="نام کاربری خود را وارد کنید" required>
+                </div>
+                <div class="form-group">
+                    <label>🔒 رمز عبور</label>
+                    <input type="password" name="password" placeholder="رمز عبور خود را وارد کنید" required>
+                </div>
+                <button type="submit">🚪 ورود به پنل راننده</button>
+            </form>
+            
+            <div class="links">
+                <a href="/login/">📋 ورود مدیریت</a> |
+                <a href="/customer/login/">👤 ورود مشتریان</a>
+            </div>
+        </div>
+        <div class="footer">
+            <p>سیستم مدیریت حمل و نقل (TMS) | توسعه یافته برای افغانستان</p>
+            <p style="margin-top: 5px;">واحد پول: افغانی (؋)</p>
+            <p style="margin-top: 5px;">© 2026 - تمامی حقوق محفوظ است</p>
+        </div>
     </div>
 </body>
 </html>

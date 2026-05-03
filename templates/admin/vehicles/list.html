@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}لیست خودروها{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🚚 لیست خودروها</h1>
+    <a href="/admin/vehicles/create/" class="btn btn-primary">➕ افزودن خودرو جدید</a>
+</div>
+
+<div style="overflow-x: auto;">
+    <table class="table">
+        <thead>
+            <tr><th>پلاک</th><th>مدل</th><th>ظرفیت (تن)</th><th>راننده فعلی</th><th>وضعیت</th><th>عملیات</th></tr>
+        </thead>
+        <tbody>
+            {% for vehicle in vehicles %}
+            <tr>
+                <td>{{ vehicle.plate_number }}</td>
+                <td>{{ vehicle.model }}</td>
+                <td>{{ vehicle.capacity }}</td>
+                <td>{{ vehicle.current_driver|default:"-" }}</td>
+                <td>{% if vehicle.is_available %}<span class="badge-success">در دسترس</span>{% else %}<span class="badge-danger">در مسیر</span>{% endif %}</td>
+                <td>
+                    <a href="/admin/vehicles/edit/{{ vehicle.id }}/" class="btn btn-primary btn-sm">✏️</a>
+                    <a href="/admin/vehicles/delete/{{ vehicle.id }}/" class="btn btn-danger btn-sm" onclick="return confirm('آیا مطمئن هستید؟')">🗑️</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" style="text-align: center;">هیچ خودرویی یافت نشد</a></a></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

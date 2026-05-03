@@ -1,13 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout as auth_logout
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.contrib import messages
 from orders.models import Driver, Order, Vehicle
 from .models import DriverOrderRequest, DriverLocation
 from django.utils import timezone
 import json
+
 
 def driver_login_view(request):
     if request.user.is_authenticated:
@@ -22,20 +24,25 @@ def driver_login_view(request):
             try:
                 driver = Driver.objects.get(user=user)
                 login(request, user)
+                messages.success(request, f'خوش آمدید {driver.first_name} {driver.last_name}')
                 return redirect('driver_dashboard')
             except Driver.DoesNotExist:
-                return render(request, 'driver_panel/login.html', {'error': 'دسترسی راننده ندارید'})
+                messages.error(request, 'شما دسترسی راننده ندارید')
+                return render(request, 'driver_panel/login.html')
         else:
-            return render(request, 'driver_panel/login.html', {'error': 'اطلاعات ورود صحیح نیست'})
+            messages.error(request, 'نام کاربری یا رمز عبور صحیح نیست')
+            return render(request, 'driver_panel/login.html')
     
     return render(request, 'driver_panel/login.html')
+
 
 @login_required
 def driver_dashboard(request):
     try:
         driver = Driver.objects.get(user=request.user)
     except Driver.DoesNotExist:
-        return HttpResponse("شما دسترسی راننده ندارید")
+        messages.error(request, 'شما دسترسی راننده ندارید')
+        return redirect('driver_login')
     
     context = {
         'driver': driver,
@@ -47,6 +54,7 @@ def driver_dashboard(request):
     }
     return render(request, 'driver_panel/dashboard.html', context)
 
+
 @login_required
 def accept_order(request, request_id):
     try:
@@ -56,7 +64,9 @@ def accept_order(request, request_id):
         return redirect('driver_login')
     
     order_request.accept()
+    messages.success(request, f'سفارش {order_request.order.order_number} با موفقیت قبول شد.')
     return redirect('driver_dashboard')
+
 
 @login_required
 def reject_order(request, request_id):
@@ -67,7 +77,9 @@ def reject_order(request, request_id):
         return redirect('driver_login')
     
     order_request.reject()
+    messages.info(request, f'سفارش {order_request.order.order_number} رد شد.')
     return redirect('driver_dashboard')
+
 
 @login_required
 def update_order_status(request, order_id):
@@ -81,6 +93,9 @@ def update_order_status(request, order_id):
                 order.status = new_status
                 if new_status == 'delivered':
                     order.actual_delivery = timezone.now()
+                    messages.success(request, 'سفارش با موفقیت تحویل داده شد.')
+                else:
+                    messages.success(request, f'وضعیت سفارش به {order.get_status_display()} تغییر یافت.')
                 order.save()
                 return JsonResponse({'success': True, 'status': order.get_status_display()})
         except:
@@ -88,17 +103,17 @@ def update_order_status(request, order_id):
     
     return JsonResponse({'error': 'درخواست نامعتبر'}, status=400)
 
-@login_required
-def driver_logout_view(request):
-    logout(request)
-    return redirect('driver_login')
 
-# ==================== API برای موبایل ====================
+def driver_logout_view(request):
+    """خروج راننده و هدایت به صفحه لاگ‌اوت"""
+    auth_logout(request)
+    messages.info(request, 'شما از پنل راننده خارج شدید.')
+    return redirect('/logout/')
+
 
 @csrf_exempt
 @require_http_methods(["POST"])
 def update_location_api(request):
-    """API برای ارسال موقعیت از موبایل راننده"""
     try:
         data = json.loads(request.body)
         driver_id = data.get('driver_id')
@@ -132,9 +147,9 @@ def update_location_api(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+
 @login_required
 def driver_locations(request):
-    """دریافت آخرین موقعیت همه رانندگان (برای ادمین)"""
     locations = []
     for driver in Driver.objects.filter(is_active=True):
         latest = DriverLocation.objects.filter(driver=driver).first()

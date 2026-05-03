@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}{% if payment %}ویرایش پرداخت{% else %}افزودن پرداخت جدید{% endif %}{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h2>{% if payment %}✏️ ویرایش پرداخت{% else %}➕ افزودن پرداخت جدید{% endif %}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>نوع</label>
+            <select name="direction" required>
+                <option value="income" {% if payment.direction == 'income' %}selected{% endif %}>دریافت</option>
+                <option value="expense" {% if payment.direction == 'expense' %}selected{% endif %}>پرداخت</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>مبلغ (؋)</label>
+            <input type="number" name="amount" value="{{ payment.amount|default:0 }}" required>
+        </div>
+        <div class="form-group">
+            <label>نوع پرداخت</label>
+            <select name="payment_type" required>
+                <option value="cash" {% if payment.payment_type == 'cash' %}selected{% endif %}>نقدی</option>
+                <option value="check" {% if payment.payment_type == 'check' %}selected{% endif %}>چک</option>
+                <option value="card" {% if payment.payment_type == 'card' %}selected{% endif %}>کارتخوان</option>
+                <option value="transfer" {% if payment.payment_type == 'transfer' %}selected{% endif %}>انتقال بانکی</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>مشتری</label>
+            <select name="customer">
+                <option value="">-----</option>
+                {% for c in customers %}
+                <option value="{{ c.id }}" {% if payment.customer.id == c.id %}selected{% endif %}>{{ c.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>فاکتور مرتبط</label>
+            <select name="invoice">
+                <option value="">-----</option>
+                {% for inv in invoices %}
+                <option value="{{ inv.id }}" {% if payment.invoice.id == inv.id %}selected{% endif %}>{{ inv.invoice_number }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>تاریخ پرداخت</label>
+            <input type="date" name="payment_date" value="{{ payment.payment_date|date:'Y-m-d'|default:'' }}" required>
+        </div>
+        <div class="form-group">
+            <label>توضیحات</label>
+            <textarea name="description" rows="3">{{ payment.description|default:'' }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">💾 ذخیره</button>
+        <a href="/admin/finance/payments/" class="btn btn-danger">↩️ انصراف</a>
+    </form>
+</div>
+{% endblock %}

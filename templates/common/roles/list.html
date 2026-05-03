@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}مدیریت نقش‌های کاربری{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>👥 مدیریت نقش‌های کاربری</h1>
+    <a href="/admin/roles/create/" class="btn btn-primary">➕ افزودن نقش جدید</a>
+</div>
+
+<div style="overflow-x: auto;">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>نام کاربری</th>
+                <th>نقش</th>
+                <th>مشتریان</th>
+                <th>رانندگان</th>
+                <th>خودروها</th>
+                <th>سفارشات</th>
+                <th>مالی</th>
+                <th>گزارشات</th>
+                <th>کاربران</th>
+                <th>عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for role in roles %}
+            <tr>
+                <td>{{ role.user.username }}</a></a></td>
+                <td>{{ role.get_role_display }}</a></a></td>
+                <td>{% if role.can_manage_customers %}✅{% else %}❌{% endif %}</a></a></td>
+                <td>{% if role.can_manage_drivers %}✅{% else %}❌{% endif %}</a></a></td>
+                <td>{% if role.can_manage_vehicles %}✅{% else %}❌{% endif %}</a></a></td>
+                <td>{% if role.can_manage_orders %}✅{% else %}❌{% endif %}</a></a></td>
+                <td>{% if role.can_manage_finance %}✅{% else %}❌{% endif %}</a></a></td>
+                <td>{% if role.can_view_reports %}✅{% else %}❌{% endif %}</a></a></td>
+                <td>{% if role.can_manage_users %}✅{% else %}❌{% endif %}</a></a></td>
+                <td>
+                    <a href="/admin/roles/edit/{{ role.id }}/" class="btn btn-primary btn-sm">✏️</a>
+                    <a href="/admin/roles/delete/{{ role.id }}/" class="btn btn-danger btn-sm" onclick="return confirm('آیا مطمئن هستید؟')">🗑️</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="10" style="text-align: center;">هیچ نقشی یافت نشد</a></a></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}لیست کاربران{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>👤 لیست کاربران</h1>
+    <a href="/admin/users/create/" class="btn btn-primary">➕ افزودن کاربر جدید</a>
+</div>
+
+<div style="overflow-x: auto;">
+    <table class="table">
+        <thead>
+            <tr><th>نام کاربری</th><th>ایمیل</th><th>وضعیت</th><th>ادمین</th><th>سوپر یوزر</th><th>تاریخ عضویت</th><th>عملیات</th></tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email|default:"-" }}</a></a></td>
+                <td>{% if user.is_active %}<span class="badge-success">فعال</span>{% else %}<span class="badge-danger">غیرفعال</span>{% endif %}</a></a></td>
+                <td>{% if user.is_staff %}✅{% else %}❌{% endif %}</a></a></td>
+                <td>{% if user.is_superuser %}✅{% else %}❌{% endif %}</a></a></td>
+                <td>{{ user.date_joined|date:"Y/m/d" }}</a></a></td>
+                <td>
+                    <a href="/admin/users/edit/{{ user.id }}/" class="btn btn-primary btn-sm">✏️</a>
+                    {% if user != request.user %}
+                    <a href="/admin/users/delete/{{ user.id }}/" class="btn btn-danger btn-sm" onclick="return confirm('آیا مطمئن هستید؟')">🗑️</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7" style="text-align: center;">هیچ کاربری یافت نشد</a></a>｜｜DSML｜｜</tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

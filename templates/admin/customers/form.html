@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}{% if customer %}ویرایش مشتری{% else %}افزودن مشتری جدید{% endif %}{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h2>{% if customer %}✏️ ویرایش مشتری{% else %}➕ افزودن مشتری جدید{% endif %}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>نام شرکت/شخص</label>
+            <input type="text" name="name" value="{{ customer.name|default:'' }}" required>
+        </div>
+        <div class="form-group">
+            <label>تلفن</label>
+            <input type="text" name="phone" value="{{ customer.phone|default:'' }}">
+        </div>
+        <div class="form-group">
+            <label>موبایل</label>
+            <input type="text" name="mobile" value="{{ customer.mobile|default:'' }}">
+        </div>
+        <div class="form-group">
+            <label>آدرس</label>
+            <textarea name="address" rows="3">{{ customer.address|default:'' }}</textarea>
+        </div>
+        <div class="form-group">
+            <label>کد ملی/اقتصادی</label>
+            <input type="text" name="national_id" value="{{ customer.national_id|default:'' }}">
+        </div>
+        <div class="form-group">
+            <label>سقف اعتبار (؋)</label>
+            <input type="number" name="credit_limit" value="{{ customer.credit_limit|default:0 }}">
+        </div>
+        <button type="submit" class="btn btn-primary">💾 ذخیره</button>
+        <a href="/admin/customers/" class="btn btn-danger">↩️ انصراف</a>
+    </form>
+</div>
+{% endblock %}

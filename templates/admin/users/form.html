@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}{% if user %}ویرایش کاربر{% else %}افزودن کاربر جدید{% endif %}{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h2>{% if user %}✏️ ویرایش کاربر{% else %}➕ افزودن کاربر جدید{% endif %}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>نام کاربری</label>
+            <input type="text" name="username" value="{{ user.username|default:'' }}" required>
+        </div>
+        <div class="form-group">
+            <label>ایمیل</label>
+            <input type="email" name="email" value="{{ user.email|default:'' }}">
+        </div>
+        <div class="form-group">
+            <label>رمز عبور {% if user %}(برای تغییر وارد کنید){% else %}*{% endif %}</label>
+            <input type="password" name="password" {% if not user %}required{% endif %}>
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="is_active" {% if user.is_active %}checked{% endif %}> فعال
+            </label>
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="is_staff" {% if user.is_staff %}checked{% endif %}> دسترسی به پنل ادمین
+            </label>
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="is_superuser" {% if user.is_superuser %}checked{% endif %}> سوپر یوزر
+            </label>
+        </div>
+        <button type="submit" class="btn btn-primary">💾 ذخیره</button>
+        <a href="/admin/users/" class="btn btn-danger">↩️ انصراف</a>
+    </form>
+</div>
+{% endblock %}

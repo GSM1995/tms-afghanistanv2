@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}لیست پرداخت‌ها{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>💰 لیست پرداخت‌ها</h1>
+    <a href="/admin/finance/payments/create/" class="btn btn-primary">➕ افزودن پرداخت جدید</a>
+</div>
+
+<div style="overflow-x: auto;">
+    <table class="table">
+        <thead>
+            <tr><th>نوع</th><th>مبلغ</th><th>نوع پرداخت</th><th>مشتری</th><th>فاکتور</th><th>تاریخ</th><th>عملیات</th></tr>
+        </thead>
+        <tbody>
+            {% for payment in payments %}
+            <tr>
+                <td>{% if payment.direction == 'income' %}<span class="badge-success">دریافت</span>{% else %}<span class="badge-danger">پرداخت</span>{% endif %}</td>
+                <td><strong>{{ payment.amount|floatformat:0 }} ؋</strong></td>
+                <td>{{ payment.get_payment_type_display }}</a></a></td>
+                <td>{{ payment.customer.name|default:"-" }}</a></a></td>
+                <td>{{ payment.invoice.invoice_number|default:"-" }}</a></a></td>
+                <td>{{ payment.payment_date|date:"Y/m/d" }}</a></a></td>
+                <td>
+                    <a href="/admin/finance/payments/edit/{{ payment.id }}/" class="btn btn-primary btn-sm">✏️</a>
+                    <a href="/admin/finance/payments/delete/{{ payment.id }}/" class="btn btn-danger btn-sm" onclick="return confirm('آیا مطمئن هستید؟')">🗑️</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7" style="text-align: center;">هیچ پرداختی یافت نشد</a></a></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

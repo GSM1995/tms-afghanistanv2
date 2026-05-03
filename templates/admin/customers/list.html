@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}لیست مشتریان{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🏢 لیست مشتریان</h1>
+    <a href="/admin/customers/create/" class="btn btn-primary">➕ افزودن مشتری جدید</a>
+</div>
+
+<div style="overflow-x: auto;">
+    <table class="table">
+        <thead>
+            <tr><th>نام</th><th>تلفن</th><th>موبایل</th><th>آدرس</th><th>اعتبار (؋)</th><th>عملیات</th></tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr>
+                <td>{{ customer.name }}</td>
+                <td>{{ customer.phone }}</td>
+                <td>{{ customer.mobile }}</td>
+                <td>{{ customer.address|truncatechars:30 }}</td>
+                <td>{{ customer.credit_limit|floatformat:0 }}</td>
+                <td>
+                    <a href="/admin/customers/edit/{{ customer.id }}/" class="btn btn-primary btn-sm">✏️</a>
+                    <a href="/admin/customers/delete/{{ customer.id }}/" class="btn btn-danger btn-sm" onclick="return confirm('آیا مطمئن هستید؟')">🗑️</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" style="text-align: center;">هیچ مشتری یافت نشد</a></a></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

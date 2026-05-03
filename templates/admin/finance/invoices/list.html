@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}لیست فاکتورها{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🧾 لیست فاکتورها</h1>
+    <a href="/admin/finance/invoices/create/" class="btn btn-primary">➕ افزودن فاکتور جدید</a>
+</div>
+
+<div style="overflow-x: auto;">
+    <table class="table">
+        <thead>
+            <tr><th>شماره فاکتور</th><th>مشتری</th><th>مبلغ کل</th><th>قابل پرداخت</th><th>وضعیت</th><th>سررسید</th><th>عملیات</th></tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoices %}
+            <tr>
+                <td>{{ invoice.invoice_number }}</td>
+                <td>{{ invoice.customer.name }}</td>
+                <td>{{ invoice.subtotal|floatformat:0 }} ؋</a></td>
+                <td><strong>{{ invoice.total|floatformat:0 }} ؋</strong></a></td>
+                <td><span class="badge-warning">{{ invoice.get_status_display }}</span></a></td>
+                <td>{{ invoice.due_date|date:"Y/m/d" }}</a></a></td>
+                <td>
+                    <a href="/admin/finance/invoices/edit/{{ invoice.id }}/" class="btn btn-primary btn-sm">✏️</a>
+                    <a href="/admin/finance/invoices/delete/{{ invoice.id }}/" class="btn btn-danger btn-sm" onclick="return confirm('آیا مطمئن هستید؟')">🗑️</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7" style="text-align: center;">هیچ فاکتوری یافت نشد</a></a></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

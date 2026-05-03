@@ -1,35 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
 # Django
 *.log
 *.pot
 *.pyc
-__pycache__/
 local_settings.py
 db.sqlite3
 media/
 staticfiles/
-.DS_Store
-
-# Virtual Environment
-venv/
-env/
-ENV/
-env.bak/
+static/
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
-# Python
-*.py[cod]
-*.so
-*.egg
-*.egg-info/
-dist/
-build/
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
-# Secrets
-*.env
-*.key
-*.pem
+# Environment variables
+.env
+.env.local
+
+# Secret key
+SECRET_KEY.txt
+
+# Database
+*.db
+*.sqlite3
+
+# Media files
+media/
+
+# Logs
+logs/
+*.log
+
+# OSX
+.DS_Store

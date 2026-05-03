@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>ثبت سفارش جدید - پنل مشتری</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            direction: rtl;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a472a 0%, #2c3e50 100%);
+            color: white;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        
+        .nav a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .logout-btn {
+            background: #e74c3c;
+            padding: 5px 15px;
+            border-radius: 5px;
+        }
+        
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .form-title {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            border-right: 4px solid #27ae60;
+            padding-right: 15px;
+        }
+        
+        .form-subtitle {
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            padding-right: 19px;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .form-group label .required {
+            color: #e74c3c;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #27ae60;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(39,174,96,0.1);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1a472a;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            justify-content: flex-end;
+        }
+        
+        .alert {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-right: 4px solid #27ae60;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-right: 4px solid #e74c3c;
+        }
+        
+        .footer {
+            background: white;
+            padding: 15px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 12px;
+            margin-top: 30px;
+            border-top: 1px solid #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🚚 پنل مشتریان</div>
+        <div class="nav">
+            <a href="/customer/dashboard/">📊 داشبورد</a>
+            <a href="/customer/orders/">📦 سفارشات</a>
+            <a href="/customer/invoices/">🧾 فاکتورها</a>
+            <a href="/customer/order/create/" style="background: #27ae60;">➕ سفارش جدید</a>
+            <a href="/customer/logout/" class="logout-btn">🚪 خروج</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="form-card">
+            <div class="form-title">➕ ثبت سفارش جدید</div>
+            <div class="form-subtitle">لطفاً اطلاعات سفارش خود را وارد کنید</div>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label>شماره سفارش <span class="required">*</span></label>
+                    <input type="text" name="order_number" placeholder="مثال: ORD-20260503-001" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>مبدا <span class="required">*</span></label>
+                    <input type="text" name="origin" placeholder="شهر مبدا، آدرس دقیق" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>مقصد <span class="required">*</span></label>
+                    <input type="text" name="destination" placeholder="شهر مقصد، آدرس دقیق" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>نوع بار <span class="required">*</span></label>
+                        <select name="cargo_type" required>
+                            <option value="">انتخاب کنید...</option>
+                            <option value="عمومی">عمومی</option>
+                            <option value="مواد غذایی">مواد غذایی</option>
+                            <option value="الکترونیک">الکترونیک</option>
+                            <option value="پوشاک">پوشاک</option>
+                            <option value="ساختمانی">ساختمانی</option>
+                            <option value="دارویی">دارویی</option>
+                            <option value="سایر">سایر</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>وزن (تن)</label>
+                        <input type="number" step="0.01" name="weight" placeholder="مثال: 2.5">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>مبلغ کرایه (؋)</label>
+                        <input type="number" name="price" placeholder="مبلغ به افغانی">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>تاریخ و زمان بارگیری <span class="required">*</span></label>
+                        <input type="datetime-local" name="pickup_date" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>توضیحات (اختیاری)</label>
+                    <textarea name="description" rows="3" placeholder="توضیحات بیشتر درباره بار، نکات خاص، etc..."></textarea>
+                </div>
+                
+                <div class="button-group">
+                    <a href="/customer/orders/" class="btn btn-secondary">↩️ انصراف</a>
+                    <button type="submit" class="btn btn-primary">✅ ثبت سفارش</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>سیستم مدیریت حمل و نقل (TMS) | توسعه یافته برای افغانستان | واحد پول: افغانی (؋)</p>
+    </div>
+</body>
+</html>
